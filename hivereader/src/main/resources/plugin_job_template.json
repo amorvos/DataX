@@ -1,0 +1,13 @@
+{
+    "name": "hivereader",
+    "parameter": {
+        "username": "",
+        "password": "",
+        "jdbcUrl": "",
+        "table": "",
+        "where": "",
+        "querySql": "",
+        "database": "",
+        "column": []
+    }
+}
