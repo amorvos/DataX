@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.baifendian.datax.plugin.reader.hivereader.HiveReaderConst.*;
 
@@ -198,7 +196,7 @@ public class HiveReader extends Reader {
         }
       } catch (SQLException e) {
         String message = MessageFormat.format("hive 链接关闭失败 ,异常为：{0}", e.getMessage());
-        throw DataXException.asDataXException(HiveReaderErrorCode.COLUMN_NOT_FOUNT, message);
+        throw DataXException.asDataXException(HiveReaderErrorCode.HIVE_CLOSE_ERROR, message);
       }
       LOG.info("Finish destroy hive connection!");
     }
