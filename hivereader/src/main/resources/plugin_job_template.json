@@ -3,11 +3,14 @@
     "parameter": {
         "username": "",
         "password": "",
-        "jdbcUrl": "",
-        "table": "",
         "where": "",
         "querySql": "",
-        "database": "",
-        "column": []
+        "column": [],
+        "connection": [
+            {
+                "jdbcUrl": [],
+                "table": []
+            }
+        ]
     }
 }

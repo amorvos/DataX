@@ -62,10 +62,6 @@ public class HiveReader extends Reader {
      */
     private String jdbcUrl;
     /**
-     * 数据库名
-     */
-    private String database;
-    /**
      * 表名
      */
     private String table;
@@ -93,7 +89,6 @@ public class HiveReader extends Reader {
       username = readerSliceConfig.getString(USERNAME, "");
       password = readerSliceConfig.getString(PASSWORD, "");
       jdbcUrl = readerSliceConfig.getString(JDBC_URL);
-      database = readerSliceConfig.getString(DATABASE);
       table = readerSliceConfig.getString(TABLE);
       where = readerSliceConfig.getString(WHERE);
       querySql = readerSliceConfig.getString(QUERY_SQL);
@@ -134,10 +129,6 @@ public class HiveReader extends Reader {
       LOG.info("Start simple param validate...");
       if (StringUtils.isEmpty(jdbcUrl)) {
         String message = "jdbcUrl 参数不得为空!";
-        throw DataXException.asDataXException(HiveReaderErrorCode.BAD_CONFIG_VALUE, message);
-      }
-      if (StringUtils.isEmpty(database)) {
-        String message = "database 参数不得为空!";
         throw DataXException.asDataXException(HiveReaderErrorCode.BAD_CONFIG_VALUE, message);
       }
       if (StringUtils.isEmpty(table) && StringUtils.isEmpty(querySql)) {
@@ -214,7 +205,7 @@ public class HiveReader extends Reader {
       if (StringUtils.isEmpty(where)) {
         where = "true";
       }
-      String sql = MessageFormat.format(SQL, StringUtils.join(column, ","), database, table, where);
+      String sql = MessageFormat.format(SQL, StringUtils.join(column, ","), table, where);
       LOG.info("Finish create sql: {}", sql);
       return sql;
     }
