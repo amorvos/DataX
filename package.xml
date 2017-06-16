@@ -82,27 +82,27 @@
             <outputDirectory>datax</outputDirectory>
         </fileSet>
 
-        <fileSet>
-            <directory>odpsreader/target/datax/</directory>
-            <includes>
-                <include>**/*.*</include>
-            </includes>
-            <outputDirectory>datax</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>otsreader/target/datax/</directory>
-            <includes>
-                <include>**/*.*</include>
-            </includes>
-            <outputDirectory>datax</outputDirectory>
-        </fileSet>
-		<fileSet>
-             <directory>otsstreamreader/target/datax/</directory>
-             <includes>
-                 <include>**/*.*</include>
-             </includes>
-             <outputDirectory>datax</outputDirectory>
-         </fileSet>
+        <!--<fileSet>-->
+            <!--<directory>odpsreader/target/datax/</directory>-->
+            <!--<includes>-->
+                <!--<include>**/*.*</include>-->
+            <!--</includes>-->
+            <!--<outputDirectory>datax</outputDirectory>-->
+        <!--</fileSet>-->
+        <!--<fileSet>-->
+            <!--<directory>otsreader/target/datax/</directory>-->
+            <!--<includes>-->
+                <!--<include>**/*.*</include>-->
+            <!--</includes>-->
+            <!--<outputDirectory>datax</outputDirectory>-->
+        <!--</fileSet>-->
+        <!--<fileSet>-->
+            <!--<directory>otsstreamreader/target/datax/</directory>-->
+            <!--<includes>-->
+                <!--<include>**/*.*</include>-->
+            <!--</includes>-->
+            <!--<outputDirectory>datax</outputDirectory>-->
+        <!--</fileSet>-->
         <fileSet>
             <directory>txtfilereader/target/datax/</directory>
             <includes>
@@ -189,13 +189,13 @@
             </includes>
             <outputDirectory>datax</outputDirectory>
         </fileSet>
-        <fileSet>
-            <directory>odpswriter/target/datax/</directory>
-            <includes>
-                <include>**/*.*</include>
-            </includes>
-            <outputDirectory>datax</outputDirectory>
-        </fileSet>
+        <!--<fileSet>-->
+            <!--<directory>odpswriter/target/datax/</directory>-->
+            <!--<includes>-->
+                <!--<include>**/*.*</include>-->
+            <!--</includes>-->
+            <!--<outputDirectory>datax</outputDirectory>-->
+        <!--</fileSet>-->
         <fileSet>
             <directory>txtfilewriter/target/datax/</directory>
             <includes>
@@ -217,13 +217,13 @@
             </includes>
             <outputDirectory>datax</outputDirectory>
         </fileSet>
-        <fileSet>
-            <directory>adswriter/target/datax/</directory>
-            <includes>
-                <include>**/*.*</include>
-            </includes>
-            <outputDirectory>datax</outputDirectory>
-        </fileSet>
+        <!--<fileSet>-->
+            <!--<directory>adswriter/target/datax/</directory>-->
+            <!--<includes>-->
+                <!--<include>**/*.*</include>-->
+            <!--</includes>-->
+            <!--<outputDirectory>datax</outputDirectory>-->
+        <!--</fileSet>-->
         <fileSet>
             <directory>streamwriter/target/datax/</directory>
             <includes>
@@ -359,6 +359,13 @@
         </fileSet>
         <fileSet>
             <directory>oceanbasev10writer/target/datax/</directory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+            <outputDirectory>datax</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>hivereader/target/datax/</directory>
             <includes>
                 <include>**/*.*</include>
             </includes>

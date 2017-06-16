@@ -36,7 +36,7 @@ public class HiveReader extends Reader {
     public List<Configuration> split(int adviceNumber) {
       //TODO 目前不支持分片读取，有待以后优化。
       List<Configuration> confList = new ArrayList<Configuration>();
-      confList.add(super.getPluginJobConf());
+      confList.add(super.getPluginJobConf().clone());
       return confList;
     }
   }
@@ -89,7 +89,7 @@ public class HiveReader extends Reader {
     @Override
     public void init() {
       LOG.info("Init reader.task...");
-      readerSliceConfig = super.getPeerPluginJobConf();
+      readerSliceConfig = super.getPluginJobConf();
       username = readerSliceConfig.getString(USERNAME, "");
       password = readerSliceConfig.getString(PASSWORD, "");
       jdbcUrl = readerSliceConfig.getString(JDBC_URL);
@@ -144,7 +144,7 @@ public class HiveReader extends Reader {
         String message = "table 参数不得为空!";
         throw DataXException.asDataXException(HiveReaderErrorCode.BAD_CONFIG_VALUE, message);
       }
-      if (column != null && column.size() > 0) {
+      if (column == null || column.size() == 0) {
         String message = "column 参数不得为空!";
         throw DataXException.asDataXException(HiveReaderErrorCode.BAD_CONFIG_VALUE, message);
       }
@@ -211,7 +211,10 @@ public class HiveReader extends Reader {
         LOG.info("Find querySql priority use querySql!");
         table = MessageFormat.format("({0})", querySql);
       }
-      String sql = MessageFormat.format(SQL, StringUtils.join(column, ","));
+      if (StringUtils.isEmpty(where)) {
+        where = "true";
+      }
+      String sql = MessageFormat.format(SQL, StringUtils.join(column, ","), database, table, where);
       LOG.info("Finish create sql: {}", sql);
       return sql;
     }
@@ -228,18 +231,25 @@ public class HiveReader extends Reader {
         LOG.info("Finish hive-sql query!");
         ResultSetMetaData metaData = res.getMetaData();
         LOG.info("Start handle result...");
+
+        //手机字段类型
+        List<String> typeList = new ArrayList<String>();
+        for (int i = 1, len = metaData.getColumnCount(); i <= len; ++i) {
+          typeList.add(metaData.getColumnTypeName(i));
+        }
+
         while (res.next()) {
           Record record = recordSender.createRecord();
-          for (int i = 1, len = metaData.getColumnCount(); i <= len; ++i) {
-            String type = metaData.getColumnTypeName(i);
+          int index = 1;
+          for (String type : typeList) {
             SupportHiveDataType supportHiveDataType = SupportHiveDataType.getType(type);
             if (supportHiveDataType == null) {
               //TODO 高级类型待处理。。。
               continue;
             }
-
-            record.addColumn(supportHiveDataType.parseDataXType(res, i));
+            record.addColumn(supportHiveDataType.parseDataXType(res, index++));
           }
+
           recordSender.sendToWriter(record);
         }
         LOG.info("Finish handle result!");

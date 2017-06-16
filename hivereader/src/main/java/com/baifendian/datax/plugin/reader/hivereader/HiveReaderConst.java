@@ -21,5 +21,5 @@ public class HiveReaderConst {
   /**
    * sql 模板
    */
-  public static final String SQL = "select {0} from {1} where {2}";
+  public static final String SQL = "select {0} from {1}.{2} where {3}";
 }

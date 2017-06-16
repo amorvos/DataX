@@ -9,5 +9,5 @@ import java.sql.SQLException;
  * Created by caojingwei on 2017/6/15.
  */
 public interface DataTypeHelp {
-  public Column parseDataXType(ResultSet res, int index) throws SQLException;
+  Column parseDataXType(ResultSet res, int index) throws SQLException;
 }
