@@ -22,6 +22,9 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSONArray;
+
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,8 +169,14 @@ public class MongoDBWriter extends Writer {
               }
               continue;
             }
+            SupportMongodbDataType supportMongodbDataType = SupportMongodbDataType.getType(type);
 
-            SupportMongodbDataType.getType(type).parseDataXType(fieldName, column, data);
+            if (supportMongodbDataType == null) {
+              String msg = MessageFormat.format("Unsupported field type: {0}", type);
+              throw new Exception(msg);
+            }
+
+            supportMongodbDataType.parseDataXType(fieldName, column, data);
 
 
 //                    if (Column.Type.INT.name().equalsIgnoreCase(type)) {
