@@ -14,9 +14,7 @@ import com.google.common.base.Strings;
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.BulkWriteOptions;
-import com.mongodb.client.model.ReplaceOneModel;
-import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.*;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -152,7 +150,7 @@ public class MongoDBWriter extends Writer {
 
     private void doBatchInsert(MongoCollection<Document> collection, List<Record> writerBuffer, JSONArray columnMeta) {
 
-      List<Document> dataList = new ArrayList<Document>();
+      List<WriteModel<Document>> dataList = new ArrayList<WriteModel<Document>>();
 
       for (Record record : writerBuffer) {
         try {
@@ -299,41 +297,20 @@ public class MongoDBWriter extends Writer {
 //                        data.put(columnMeta.getJSONObject(i).getString(KeyConstant.COLUMN_NAME),record.getColumn(i).asString());
 //                    }
           }
-          dataList.add(data);
+
+          // TODO 暂时只支持追加
+          dataList.add(new InsertOneModel<Document>(data));
         } catch (Exception e) {
           //处理脏数据
           super.getTaskPluginCollector().collectDirtyRecord(record, e);
         }
       }
 
-      for (Document document:dataList){
-        logger.info(document.toJson());
-      }
       /**
        * 如果存在重复的值覆盖
        */
-      if (this.writeMode != null &&
-              this.writeMode.getString(KeyConstant.IS_REPLACE) != null &&
-              KeyConstant.isValueTrue(this.writeMode.getString(KeyConstant.IS_REPLACE))) {
-        String uniqueKey = this.writeMode.getString(KeyConstant.UNIQUE_KEY);
-        if (!Strings.isNullOrEmpty(uniqueKey)) {
-          List<ReplaceOneModel<Document>> replaceOneModelList = new ArrayList<ReplaceOneModel<Document>>();
-          for (Document data : dataList) {
-            BasicDBObject query = new BasicDBObject();
-            if (uniqueKey != null) {
-              query.put(uniqueKey, data.get(uniqueKey));
-            }
-            ReplaceOneModel<Document> replaceOneModel = new ReplaceOneModel<Document>(query, data, new UpdateOptions().upsert(true));
-            replaceOneModelList.add(replaceOneModel);
-          }
-          collection.bulkWrite(replaceOneModelList, new BulkWriteOptions().ordered(false));
-        } else {
-          throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE,
-                  MongoDBWriterErrorCode.ILLEGAL_VALUE.getDescription());
-        }
-      } else {
-        collection.insertMany(dataList);
-      }
+
+      collection.bulkWrite(dataList);
     }
 
 
