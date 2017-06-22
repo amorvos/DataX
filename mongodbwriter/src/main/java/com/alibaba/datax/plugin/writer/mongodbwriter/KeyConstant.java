@@ -49,10 +49,19 @@ public class KeyConstant {
      * 列分隔符
      */
     public static final String COLUMN_SPLITTER = "splitter";
+
+    public static final String UPSERT_KEY = "upsertKey";
     /**
      * 数据更新列信息
      */
     public static final String WRITE_MODE = "writeMode";
+
+    public static final String WRITE_MODE_INSERT = "INSERT";
+
+    public static final String WRITE_MODE_UPDATE = "UPDATE";
+
+    public static final String WRITE_MODE_REPLACE = "REPLACE";
+
     /**
      * 有相同的记录是否覆盖，默认为false
      */

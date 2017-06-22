@@ -223,6 +223,52 @@ public class MongoUtil {
     return null;
   }
 
+  /**
+   * 取一个Document 指定字段的值
+   *
+   * @param fieldName
+   */
+  public static Object getDocumentValue(Document document, String fieldName) {
+    Object value = null;
+    String[] fieldList = fieldName.split("\\.");
+    for (int i = 0, len = fieldList.length; i < len; i++) {
+      String field = fieldList[i];
+
+      boolean islast = false;
+      //检查是不是最后一个
+      if (i == len - 1) {
+        islast = true;
+      }
+
+      if (isFieldList(field)) {
+        String fieldListName = getFieldListName(field);
+        int index = getFieldListIndex(field);
+        List valList = document.get(fieldListName, List.class);
+        if (valList == null) {
+          break;
+        }
+        Object val = valList.get(index);
+
+        if (islast) {
+          value = val;
+        } else {
+          document = (Document) val;
+        }
+
+      } else {
+        Object val = document.get(field);
+        if (islast) {
+          value = val;
+        } else if (val != null) {
+          document = (Document) val;
+        } else {
+          break;
+        }
+      }
+    }
+    return value;
+  }
+
 
   public static void main(String[] args) {
 //    try {
@@ -241,6 +287,7 @@ public class MongoUtil {
     String field = "user.name.c.e[2].t[3].f[1]";
     String field2 = "user.name.c.e[2].t[3].f[0]";
     String field3 = "a.b.c.e[2].t[2].f[0]";
+    String field4 = "user.name.c.e[2].t[3]";
     //String field = "a[10]";
     String value = "helloword!";
 
@@ -250,6 +297,8 @@ public class MongoUtil {
     putDBObject(document, field2, value);
 
     System.out.println(document.toJson());
+
+    System.out.println(getDocumentValue(document, field3));
 
   }
 }
