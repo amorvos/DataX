@@ -26,6 +26,7 @@ public enum SupportMongodbDataType implements DataTypeHelp {
   }, STRING {
     @Override
     public void parseDataXType(String fileName, Column column, Document document) throws Exception {
+      //TODO 是否需要将string自动转换为json对象？
       putDBObject(document, fileName, column.asString());
     }
   }, OBJECT {

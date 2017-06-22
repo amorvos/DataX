@@ -226,17 +226,18 @@ public class MongoDBWriter extends Writer {
       this.collection = writerSliceConfig.getString(KeyConstant.MONGO_COLLECTION_NAME);
       this.batchSize = BATCH_SIZE;
       this.mongodbColumnMeta = JSON.parseArray(writerSliceConfig.getString(KeyConstant.MONGO_COLUMN));
-      this.writeMode = writerSliceConfig.getString(writeMode);
+      this.writeMode = writerSliceConfig.getString(KeyConstant.WRITE_MODE);
 
       this.upsertKey = writerSliceConfig.getString(KeyConstant.UNIQUE_KEY);
 
-      if (StringUtils.isEmpty(KeyConstant.WRITE_MODE_REPLACE)){
-
+      if (StringUtils.isEmpty(writeMode)){
+        String message = "写入模式(writeMode)不得为空！";
+        throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE, message);
       }
 
       //如果writeMode 是update 或者 REPLACE 需要生成条件
       if (Arrays.asList(KeyConstant.WRITE_MODE_REPLACE, KeyConstant.WRITE_MODE_UPDATE).contains(writeMode) && StringUtils.isEmpty(upsertKey)) {
-        String message = "因为你配置了update/replace写入模式，所以upserKey不得为空！";
+        String message = "因为你配置了update/replace写入模式（writeMode），所以upserKey不得为空！";
         throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE, message);
       }
     }
