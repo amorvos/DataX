@@ -172,12 +172,13 @@ public class MongoDBWriter extends Writer {
 
           }
 
-
+          logger.info(data.toJson());
         } catch (Exception e) {
           //处理脏数据
           super.getTaskPluginCollector().collectDirtyRecord(record, e);
           continue;
         }
+
 
         //对于不同的写入模式
         switch (writeMode) {
