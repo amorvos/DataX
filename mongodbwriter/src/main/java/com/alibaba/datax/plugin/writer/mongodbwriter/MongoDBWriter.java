@@ -132,7 +132,7 @@ public class MongoDBWriter extends Writer {
                 MongoDBWriterErrorCode.ILLEGAL_VALUE.getDescription());
       }
       MongoDatabase db = mongoClient.getDatabase(database);
-      MongoCollection<Document> col = db.getCollection(this.collection, Document.class);
+      MongoCollection<Document> col = db.getCollection(this.collection);
       List<Record> writerBuffer = new ArrayList<Record>(this.batchSize);
       Record record = null;
       while ((record = lineReceiver.getFromReader()) != null) {
@@ -159,15 +159,6 @@ public class MongoDBWriter extends Writer {
             Column column = record.getColumn(i);
             String type = columnMeta.getJSONObject(i).getString(KeyConstant.COLUMN_TYPE);
             String fieldName = columnMeta.getJSONObject(i).getString(KeyConstant.COLUMN_NAME);
-            //空记录处理
-            if (Strings.isNullOrEmpty(record.getColumn(i).asString())) {
-              if (KeyConstant.isArrayType(type.toLowerCase())) {
-                data.put(columnMeta.getJSONObject(i).getString(KeyConstant.COLUMN_NAME), new Object[0]);
-              } else {
-                data.put(columnMeta.getJSONObject(i).getString(KeyConstant.COLUMN_NAME), record.getColumn(i).asString());
-              }
-              continue;
-            }
             SupportMongodbDataType supportMongodbDataType = SupportMongodbDataType.getType(type);
 
             if (supportMongodbDataType == null) {
@@ -305,10 +296,6 @@ public class MongoDBWriter extends Writer {
           super.getTaskPluginCollector().collectDirtyRecord(record, e);
         }
       }
-
-      /**
-       * 如果存在重复的值覆盖
-       */
 
       collection.bulkWrite(dataList);
     }
