@@ -4,6 +4,7 @@ import com.alibaba.datax.common.element.Record;
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.plugin.writer.mongodbwriter.KeyConstant;
+import com.alibaba.datax.plugin.writer.mongodbwriter.MongoDBWriter;
 import com.alibaba.datax.plugin.writer.mongodbwriter.MongoDBWriterErrorCode;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.BasicDBObject;
@@ -11,12 +12,16 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.print.Doc;
 import java.net.UnknownHostException;
 import java.util.*;
 
 public class MongoUtil {
+
+  private static final Logger logger = LoggerFactory.getLogger(MongoUtil.class);
 
   public static MongoClient initMongoClient(Configuration conf) {
 
@@ -233,8 +238,8 @@ public class MongoUtil {
     System.out.println(getFieldListIndex(fieldList));
 
 
-    String field = "a.b.c.e[2].t[3].f[1]";
-    String field2 = "a.b.c.e[2].t[3].f[0]";
+    String field = "user.name.c.e[2].t[3].f[1]";
+    String field2 = "user.name.c.e[2].t[3].f[0]";
     String field3 = "a.b.c.e[2].t[2].f[0]";
     //String field = "a[10]";
     String value = "helloword!";

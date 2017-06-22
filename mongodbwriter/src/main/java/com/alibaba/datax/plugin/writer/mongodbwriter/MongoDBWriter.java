@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
 
+import javax.print.Doc;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -303,6 +304,10 @@ public class MongoDBWriter extends Writer {
           //处理脏数据
           super.getTaskPluginCollector().collectDirtyRecord(record, e);
         }
+      }
+
+      for (Document document:dataList){
+        logger.info(document.toJson());
       }
       /**
        * 如果存在重复的值覆盖
