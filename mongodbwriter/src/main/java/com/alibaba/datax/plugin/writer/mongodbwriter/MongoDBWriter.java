@@ -199,7 +199,7 @@ public class MongoDBWriter extends Writer {
             Document upsert = new Document();
             Object upsertVal = MongoUtil.getDocumentValue(data, upsertKey);
             MongoUtil.putDBObject(upsert, upsertKey, upsertVal);
-            dataList.add(new UpdateManyModel<>(data, upsert));
+            dataList.add(new UpdateOneModel<>(data, upsert));
             break;
           }
           default: {
