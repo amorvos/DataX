@@ -228,7 +228,7 @@ public class MongoDBWriter extends Writer {
       this.mongodbColumnMeta = JSON.parseArray(writerSliceConfig.getString(KeyConstant.MONGO_COLUMN));
       this.writeMode = writerSliceConfig.getString(KeyConstant.WRITE_MODE);
 
-      this.upsertKey = writerSliceConfig.getString(KeyConstant.UNIQUE_KEY);
+      this.upsertKey = writerSliceConfig.getString(KeyConstant.UPSERT_KEY);
 
       if (StringUtils.isEmpty(writeMode)){
         String message = "写入模式(writeMode)不得为空！";
