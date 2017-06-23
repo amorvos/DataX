@@ -186,20 +186,16 @@ public class MongoDBWriter extends Writer {
             dataList.add(new InsertOneModel<>(data));
             break;
           }
-          case KeyConstant.WRITE_MODE_REPLACE: {
-            //组装upsert
-            Document upsert = new Document();
-            Object upsertVal = MongoUtil.getDocumentValue(data, upsertKey);
-            MongoUtil.putDBObject(upsert, upsertKey, upsertVal);
-            dataList.add(new ReplaceOneModel<>(data, upsert));
-            break;
-          }
           case KeyConstant.WRITE_MODE_UPDATE: {
             //组装upsert
-            Document upsert = new Document();
             Object upsertVal = MongoUtil.getDocumentValue(data, upsertKey);
-            MongoUtil.putDBObject(upsert, upsertKey, upsertVal);
-            dataList.add(new UpdateOneModel<>(upsert, new Document("$set", data), new UpdateOptions().upsert(true)));
+            dataList.add(new UpdateOneModel<>(new Document(upsertKey, upsertVal), new Document("$set", data), new UpdateOptions().upsert(false)));
+            break;
+          }
+          case KeyConstant.WRITE_MODE_UPSET: {
+            //组装upsert
+            Object upsertVal = MongoUtil.getDocumentValue(data, upsertKey);
+            dataList.add(new UpdateOneModel<>(new Document(upsertKey, upsertVal), new Document("$set", data), new UpdateOptions().upsert(true)));
             break;
           }
           default: {
@@ -237,7 +233,7 @@ public class MongoDBWriter extends Writer {
       }
 
       //如果writeMode 是update 或者 REPLACE 需要生成条件
-      if (Arrays.asList(KeyConstant.WRITE_MODE_REPLACE, KeyConstant.WRITE_MODE_UPDATE).contains(writeMode) && StringUtils.isEmpty(upsertKey)) {
+      if (Arrays.asList(KeyConstant.WRITE_MODE_UPSET, KeyConstant.WRITE_MODE_UPDATE).contains(writeMode) && StringUtils.isEmpty(upsertKey)) {
         String message = "因为你配置了update/replace写入模式（writeMode），所以upserKey不得为空！";
         throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE, message);
       }

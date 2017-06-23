@@ -58,9 +58,9 @@ public class KeyConstant {
 
     public static final String WRITE_MODE_INSERT = "INSERT";
 
-    public static final String WRITE_MODE_UPDATE = "UPDATE";
+    public static final String WRITE_MODE_UPSET = "UPSET";
 
-    public static final String WRITE_MODE_REPLACE = "REPLACE";
+    public static final String WRITE_MODE_UPDATE = "UPDATE";
 
     /**
      * 有相同的记录是否覆盖，默认为false
