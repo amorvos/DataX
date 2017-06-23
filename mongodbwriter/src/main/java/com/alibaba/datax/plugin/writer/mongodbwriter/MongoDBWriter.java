@@ -199,7 +199,7 @@ public class MongoDBWriter extends Writer {
             Document upsert = new Document();
             Object upsertVal = MongoUtil.getDocumentValue(data, upsertKey);
             MongoUtil.putDBObject(upsert, upsertKey, upsertVal);
-            dataList.add(new UpdateOneModel<>(data, upsert));
+            dataList.add(new UpdateOneModel<>(upsert, data, new UpdateOptions().upsert(true)));
             break;
           }
           default: {
@@ -231,7 +231,7 @@ public class MongoDBWriter extends Writer {
 
       this.upsertKey = writerSliceConfig.getString(KeyConstant.UPSERT_KEY);
 
-      if (StringUtils.isEmpty(writeMode)){
+      if (StringUtils.isEmpty(writeMode)) {
         String message = "写入模式(writeMode)不得为空！";
         throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE, message);
       }
