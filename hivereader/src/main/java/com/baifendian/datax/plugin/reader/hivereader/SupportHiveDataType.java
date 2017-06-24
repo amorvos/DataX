@@ -97,6 +97,7 @@ public enum SupportHiveDataType implements DataTypeHelp {
   MAP {
     @Override
     public Column parseDataXType(ResultSet res, int index) throws SQLException {
+      //自动转化为json
       String map = res.getString(index);
       return new StringColumn(map);
     }
@@ -115,10 +116,12 @@ public enum SupportHiveDataType implements DataTypeHelp {
       return new StringColumn(struct);
     }
   },
-  UNIONTYPE {
+  UNION_TYPE {
     @Override
     public Column parseDataXType(ResultSet res, int index) throws SQLException {
-      return null;
+      //TODO 需要测试
+      String union_type = res.getString(index);
+      return new StringColumn(union_type);
     }
   };
 
