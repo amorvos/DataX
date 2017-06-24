@@ -300,5 +300,8 @@ public class MongoUtil {
 
     System.out.println(getDocumentValue(document, field3));
 
+    Document document1 = Document.parse("{\"job\":{\"setting\":{\"speed\":{\"channel\":1}},\"content\":[{\"reader\":{\"name\":\"mysqlreader\",\"parameter\":{\"username\":\"root\",\"password\":\"root\",\"connection\":[{\"querySql\":[\"select db_id,on_line_flag from db_info where db_id < 10;\"],\"jdbcUrl\":[\"jdbc:mysql://bad_ip:3306/database\",\"jdbc:mysql://127.0.0.1:bad_port/database\",\"jdbc:mysql://127.0.0.1:3306/database\"]}]}},\"writer\":{\"name\":\"streamwriter\",\"parameter\":{\"print\":false,\"encoding\":\"UTF-8\"}}}]}}");
+
+    System.out.println(document1.toJson());
   }
 }

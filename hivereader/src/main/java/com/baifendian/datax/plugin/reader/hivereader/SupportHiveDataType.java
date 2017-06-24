@@ -93,6 +93,33 @@ public enum SupportHiveDataType implements DataTypeHelp {
     public Column parseDataXType(ResultSet res, int index) throws SQLException {
       return new BytesColumn(res.getBytes(index));
     }
+  },
+  MAP {
+    @Override
+    public Column parseDataXType(ResultSet res, int index) throws SQLException {
+      String map = res.getString(index);
+      return new StringColumn(map);
+    }
+  },
+  ARRAY {
+    @Override
+    public Column parseDataXType(ResultSet res, int index) throws SQLException {
+      String array = res.getString(index);
+      return new StringColumn(array);
+    }
+  },
+  STRUCT {
+    @Override
+    public Column parseDataXType(ResultSet res, int index) throws SQLException {
+      String struct = res.getString(index);
+      return new StringColumn(struct);
+    }
+  },
+  UNIONTYPE {
+    @Override
+    public Column parseDataXType(ResultSet res, int index) throws SQLException {
+      return null;
+    }
   };
 
   /**
