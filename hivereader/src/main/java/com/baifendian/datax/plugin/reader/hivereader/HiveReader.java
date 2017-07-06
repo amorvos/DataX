@@ -235,7 +235,7 @@ public class HiveReader extends Reader {
           for (String type : typeList) {
             SupportHiveDataType supportHiveDataType = SupportHiveDataType.getType(type);
             if (supportHiveDataType == null) {
-              //TODO 高级类型待处理。。。
+              //TODO 脏数据处理
               continue;
             }
             record.addColumn(supportHiveDataType.parseDataXType(res, index++));
