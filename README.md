@@ -18,16 +18,13 @@ DataX本身作为数据同步框架，将不同数据源的同步抽象为从源
 
 ##### 请参考：[DataX-Introduction](https://github.com/alibaba/DataX/wiki/DataX-Introduction)
 
+# DataX 编译
 
+在源码根目录下执行命令
 
-# Quick Start
-
-##### 请点击：[Quick Start](https://github.com/baifendian/DataX/wiki/Quick-Start)
-* [配置示例：从MySQL读取数据 写入ODPS](https://github.com/baifendian/DataX/wiki/Quick-Start)
-* [配置定时任务](https://github.com/baifendian/DataX/wiki/%E9%85%8D%E7%BD%AE%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%EF%BC%88Linux%E7%8E%AF%E5%A2%83%EF%BC%89)
-* [动态传入参数](https://github.com/baifendian/DataX/wiki/%E5%8A%A8%E6%80%81%E4%BC%A0%E5%85%A5%E5%8F%82%E6%95%B0)
-
-
+```sh
+mvn -U clean package assembly:assembly -Dmaven.test.skip=true
+```
 
 # Support Data Channels
 
@@ -53,8 +50,6 @@ DataX目前已经有了比较全面的插件体系，主流的RDBMS数据库、N
 |              | HDFS       |     √     |     √     |
 
 
-# 我要开发新的插件
-请点击：[DataX插件开发宝典](https://github.com/baifendian/DataX/wiki/DataX%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91%E5%AE%9D%E5%85%B8)
 
 # 项目成员
 
