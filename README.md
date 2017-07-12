@@ -26,6 +26,8 @@ DataX本身作为数据同步框架，将不同数据源的同步抽象为从源
 mvn -U clean package assembly:assembly -Dmaven.test.skip=true
 ```
 
+编译后的文件在target目录内
+
 # Support Data Channels
 
 DataX目前已经有了比较全面的插件体系，主流的RDBMS数据库、NOSQL、大数据计算系统都已经接入，目前支持数据如下图，详情请点击：[DataX数据源参考指南](https://github.com/alibaba/DataX/wiki/DataX-all-data-channels)
