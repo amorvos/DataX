@@ -184,6 +184,7 @@ public class MongoDBWriter extends Writer {
         switch (writeMode) {
           case KeyConstant.WRITE_MODE_OVER: {
             collection.deleteMany(new Document());
+            dataList.add(new InsertOneModel<>(data));
             break;
           }
 
