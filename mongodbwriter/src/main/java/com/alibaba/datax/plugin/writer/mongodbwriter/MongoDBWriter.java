@@ -88,9 +88,9 @@ public class MongoDBWriter extends Writer {
       }
       Configuration conConf = Configuration.from(preSql);
       if (Strings.isNullOrEmpty(database) || Strings.isNullOrEmpty(collection)
-              || mongoClient == null || mongodbColumnMeta == null || batchSize == null) {
+          || mongoClient == null || mongodbColumnMeta == null || batchSize == null) {
         throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE,
-                MongoDBWriterErrorCode.ILLEGAL_VALUE.getDescription());
+            MongoDBWriterErrorCode.ILLEGAL_VALUE.getDescription());
       }
       MongoDatabase db = mongoClient.getDatabase(database);
       MongoCollection col = db.getCollection(this.collection);
@@ -112,7 +112,7 @@ public class MongoDBWriter extends Writer {
               query.put(_conf.getString("name"), _conf.get("value"));
             } else {
               query.put(_conf.getString("name"),
-                      new BasicDBObject(_conf.getString("condition"), _conf.get("value")));
+                  new BasicDBObject(_conf.getString("condition"), _conf.get("value")));
             }
           }
 //              and  { "pv" : { "$gt" : 200 , "$lt" : 3000} , "pid" : { "$ne" : "xxx"}}
@@ -123,16 +123,17 @@ public class MongoDBWriter extends Writer {
         col.deleteMany(query);
       }
       if (logger.isDebugEnabled()) {
-        logger.debug("After job prepare(), originalConfig now is:[\n{}\n]", writerSliceConfig.toJSON());
+        logger.debug("After job prepare(), originalConfig now is:[\n{}\n]",
+            writerSliceConfig.toJSON());
       }
     }
 
     @Override
     public void startWrite(RecordReceiver lineReceiver) {
       if (Strings.isNullOrEmpty(database) || Strings.isNullOrEmpty(collection)
-              || mongoClient == null || mongodbColumnMeta == null || batchSize == null) {
+          || mongoClient == null || mongodbColumnMeta == null || batchSize == null) {
         throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE,
-                MongoDBWriterErrorCode.ILLEGAL_VALUE.getDescription());
+            MongoDBWriterErrorCode.ILLEGAL_VALUE.getDescription());
       }
       MongoDatabase db = mongoClient.getDatabase(database);
       MongoCollection<Document> col = db.getCollection(this.collection);
@@ -151,7 +152,8 @@ public class MongoDBWriter extends Writer {
       }
     }
 
-    private void doBatchInsert(MongoCollection<Document> collection, List<Record> writerBuffer, JSONArray columnMeta) {
+    private void doBatchInsert(MongoCollection<Document> collection, List<Record> writerBuffer,
+        JSONArray columnMeta) {
 
       List<WriteModel<Document>> dataList = new ArrayList<WriteModel<Document>>();
 
@@ -178,28 +180,36 @@ public class MongoDBWriter extends Writer {
           continue;
         }
 
-
         //对于不同的写入模式
         switch (writeMode) {
+          case KeyConstant.WRITE_MODE_OVER: {
+            collection.deleteMany(new Document());
+            break;
+          }
+
           case KeyConstant.WRITE_MODE_INSERT: {
             dataList.add(new InsertOneModel<>(data));
             break;
           }
           case KeyConstant.WRITE_MODE_UPDATE: {
             //组装upsert
-            Object upsertVal = MongoUtil.getDocumentValue(data, upsertKey);
-            dataList.add(new UpdateOneModel<>(new Document(upsertKey, upsertVal), new Document("$set", data), new UpdateOptions().upsert(false)));
+            Document upsertVal = MongoUtil.getUpsertVal(data, upsertKey);
+            dataList.add(new UpdateOneModel<>(upsertVal, new Document("$set", data),
+                new UpdateOptions().upsert(false)));
             break;
           }
           case KeyConstant.WRITE_MODE_UPSET: {
             //组装upsert
-            Object upsertVal = MongoUtil.getDocumentValue(data, upsertKey);
-            dataList.add(new UpdateOneModel<>(new Document(upsertKey, upsertVal), new Document("$set", data), new UpdateOptions().upsert(true)));
+            Document upsertVal = MongoUtil.getUpsertVal(data, upsertKey);
+            dataList.add(
+                new UpdateOneModel<>(upsertVal, new Document("$set", data),
+                    new UpdateOptions().upsert(true)));
             break;
           }
           default: {
             String message = MessageFormat.format("不支持的写入类型：{0}", writeMode);
-            throw DataXException.asDataXException(MongoDBWriterErrorCode.UNSUPPORTED_WRITE_MODE, message);
+            throw DataXException
+                .asDataXException(MongoDBWriterErrorCode.UNSUPPORTED_WRITE_MODE, message);
           }
         }
       }
@@ -215,13 +225,15 @@ public class MongoDBWriter extends Writer {
       this.password = writerSliceConfig.getString(KeyConstant.MONGO_USER_PASSWORD);
       this.database = writerSliceConfig.getString(KeyConstant.MONGO_DB_NAME);
       if (!Strings.isNullOrEmpty(userName) && !Strings.isNullOrEmpty(password)) {
-        this.mongoClient = MongoUtil.initCredentialMongoClient(this.writerSliceConfig, userName, password, database);
+        this.mongoClient = MongoUtil
+            .initCredentialMongoClient(this.writerSliceConfig, userName, password, database);
       } else {
         this.mongoClient = MongoUtil.initMongoClient(this.writerSliceConfig);
       }
       this.collection = writerSliceConfig.getString(KeyConstant.MONGO_COLLECTION_NAME);
       this.batchSize = BATCH_SIZE;
-      this.mongodbColumnMeta = JSON.parseArray(writerSliceConfig.getString(KeyConstant.MONGO_COLUMN));
+      this.mongodbColumnMeta = JSON
+          .parseArray(writerSliceConfig.getString(KeyConstant.MONGO_COLUMN));
       this.writeMode = writerSliceConfig.getString(KeyConstant.WRITE_MODE);
 
       this.upsertKey = writerSliceConfig.getString(KeyConstant.UPSERT_KEY);
@@ -232,7 +244,8 @@ public class MongoDBWriter extends Writer {
       }
 
       //如果writeMode 是update 或者 REPLACE 需要生成条件
-      if (Arrays.asList(KeyConstant.WRITE_MODE_UPSET, KeyConstant.WRITE_MODE_UPDATE).contains(writeMode) && StringUtils.isEmpty(upsertKey)) {
+      if (Arrays.asList(KeyConstant.WRITE_MODE_UPSET, KeyConstant.WRITE_MODE_UPDATE)
+          .contains(writeMode) && StringUtils.isEmpty(upsertKey)) {
         String message = "因为你配置了update/replace写入模式（writeMode），所以upserKey不得为空！";
         throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE, message);
       }

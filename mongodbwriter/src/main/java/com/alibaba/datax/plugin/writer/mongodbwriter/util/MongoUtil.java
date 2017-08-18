@@ -40,14 +40,16 @@ public class MongoUtil {
     }
   }
 
-  public static MongoClient initCredentialMongoClient(Configuration conf, String userName, String password, String database) {
+  public static MongoClient initCredentialMongoClient(Configuration conf, String userName,
+      String password, String database) {
 
     List<Object> addressList = conf.getList(KeyConstant.MONGO_ADDRESS);
     if (!isHostPortPattern(addressList)) {
       throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE, "不合法参数");
     }
     try {
-      MongoCredential credential = MongoCredential.createCredential(userName, database, password.toCharArray());
+      MongoCredential credential = MongoCredential
+          .createCredential(userName, database, password.toCharArray());
       return new MongoClient(parseServerAddress(addressList), Arrays.asList(credential));
 
     } catch (UnknownHostException e) {
@@ -61,9 +63,6 @@ public class MongoUtil {
 
   /**
    * 判断地址类型是否符合要求
-   *
-   * @param addressList
-   * @return
    */
   private static boolean isHostPortPattern(List<Object> addressList) {
     for (Object address : addressList) {
@@ -77,11 +76,9 @@ public class MongoUtil {
 
   /**
    * 转换为mongo地址协议
-   *
-   * @param rawAddressList
-   * @return
    */
-  private static List<ServerAddress> parseServerAddress(List<Object> rawAddressList) throws UnknownHostException {
+  private static List<ServerAddress> parseServerAddress(List<Object> rawAddressList)
+      throws UnknownHostException {
     List<ServerAddress> addressList = new ArrayList<ServerAddress>();
     for (Object address : rawAddressList) {
       String[] tempAddress = ((String) address).split(":");
@@ -97,8 +94,6 @@ public class MongoUtil {
 
   /**
    * 把Record 插入到 BDObject 中
-   *
-   * @param document
    */
   public static void putDBObject(Document document, String fieldName, Object value) {
     String[] fieldList = fieldName.split("\\.");
@@ -132,12 +127,6 @@ public class MongoUtil {
 
   /**
    * 向指定的docment中插入一个含下标的键值对。如果已经有值了就放弃插入，如有没有则插入。返回插入的值。
-   *
-   * @param document
-   * @param field
-   * @param value
-   * @param <T>
-   * @return
    */
   public static <T> T handleList(Document document, String field, T value) {
     String fieldListName = getFieldListName(field);
@@ -166,12 +155,6 @@ public class MongoUtil {
 
   /**
    * 向指定的docment中插入一个不含下标的键值对。
-   *
-   * @param document
-   * @param field
-   * @param value
-   * @param <T>
-   * @return
    */
   public static <T> T handleObject(Document document, String field, T value) {
     T fieldDoc = (T) document.get(field);
@@ -184,9 +167,6 @@ public class MongoUtil {
 
   /**
    * 判断字段是否含有下标
-   *
-   * @param field
-   * @return
    */
   public static boolean isFieldList(final String field) {
     return field.contains("[") && field.contains("]");
@@ -194,9 +174,6 @@ public class MongoUtil {
 
   /**
    * 获取一个含有下标的字符串的字段名称
-   *
-   * @param field
-   * @return
    */
   public static String getFieldListName(final String field) {
     return field.substring(0, field.indexOf("["));
@@ -204,9 +181,6 @@ public class MongoUtil {
 
   /**
    * 获取一个含有下标的字符串的下标
-   *
-   * @param field
-   * @return
    */
   public static int getFieldListIndex(final String field) {
     return Integer.valueOf(field.substring(field.indexOf("[") + 1, field.indexOf("]")));
@@ -214,9 +188,6 @@ public class MongoUtil {
 
   /**
    * 获取一个字符串的名称和下标
-   *
-   * @param field
-   * @return
    */
   public static Map.Entry<String, String> getFieldAndSubscript(String field) {
     //TODO 分析一个字段的名称和下标
@@ -225,8 +196,6 @@ public class MongoUtil {
 
   /**
    * 取一个Document 指定字段的值
-   *
-   * @param fieldName
    */
   public static Object getDocumentValue(Document document, String fieldName) {
     Object value = null;
@@ -269,6 +238,23 @@ public class MongoUtil {
     return value;
   }
 
+  /**
+   * 获取upsert val
+   * @param document
+   * @param upsertKeys
+   * @return
+   */
+  public static Document getUpsertVal(Document document, String upsertKeys) {
+    String[] upsertKeyArr = upsertKeys.split(",");
+
+    Document upsertVal = new Document();
+
+    for (String upsertKey : upsertKeyArr) {
+      upsertVal.append(upsertKey, MongoUtil.getDocumentValue(document, upsertKey));
+    }
+    return upsertVal;
+  }
+
 
   public static void main(String[] args) {
 //    try {
@@ -282,7 +268,6 @@ public class MongoUtil {
     String fieldList = "abc[11]";
     System.out.println(getFieldListName(fieldList));
     System.out.println(getFieldListIndex(fieldList));
-
 
     String field = "user.name.c.e[2].t[3].f[1]";
     String field2 = "user.name.c.e[2].t[3].f[0]";
@@ -300,8 +285,11 @@ public class MongoUtil {
 
     System.out.println(getDocumentValue(document, field3));
 
-    Document document1 = Document.parse("{\"job\":{\"setting\":{\"speed\":{\"channel\":1}},\"content\":[{\"reader\":{\"name\":\"mysqlreader\",\"parameter\":{\"username\":\"root\",\"password\":\"root\",\"connection\":[{\"querySql\":[\"select db_id,on_line_flag from db_info where db_id < 10;\"],\"jdbcUrl\":[\"jdbc:mysql://bad_ip:3306/database\",\"jdbc:mysql://127.0.0.1:bad_port/database\",\"jdbc:mysql://127.0.0.1:3306/database\"]}]}},\"writer\":{\"name\":\"streamwriter\",\"parameter\":{\"print\":false,\"encoding\":\"UTF-8\"}}}]}}");
+    Document document1 = Document.parse(
+        "{\"job\":{\"setting\":{\"speed\":{\"channel\":1}},\"content\":[{\"reader\":{\"name\":\"mysqlreader\",\"parameter\":{\"username\":\"root\",\"password\":\"root\",\"connection\":[{\"querySql\":[\"select db_id,on_line_flag from db_info where db_id < 10;\"],\"jdbcUrl\":[\"jdbc:mysql://bad_ip:3306/database\",\"jdbc:mysql://127.0.0.1:bad_port/database\",\"jdbc:mysql://127.0.0.1:3306/database\"]}]}},\"writer\":{\"name\":\"streamwriter\",\"parameter\":{\"print\":false,\"encoding\":\"UTF-8\"}}}]}}");
 
     System.out.println(document1.toJson());
   }
+
+
 }

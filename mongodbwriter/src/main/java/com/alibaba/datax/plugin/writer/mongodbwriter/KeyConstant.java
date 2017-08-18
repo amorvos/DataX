@@ -62,6 +62,8 @@ public class KeyConstant {
 
     public static final String WRITE_MODE_UPDATE = "UPDATE";
 
+    public static final String WRITE_MODE_OVER = "OVERWRITE";
+
     /**
      * 有相同的记录是否覆盖，默认为false
      */
