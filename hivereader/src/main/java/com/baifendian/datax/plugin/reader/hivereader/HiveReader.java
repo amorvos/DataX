@@ -20,6 +20,7 @@ import static com.baifendian.datax.plugin.reader.hivereader.HiveReaderConst.*;
  * 使用jdbc读 hive 插件
  */
 public class HiveReader extends Reader {
+
   public static class Job extends Reader.Job {
 
     @Override
@@ -42,6 +43,7 @@ public class HiveReader extends Reader {
   }
 
   public static class Task extends Reader.Task {
+
     private static Logger LOG = LoggerFactory.getLogger(Reader.Task.class);
     /**
      * jdbc连接
@@ -236,6 +238,7 @@ public class HiveReader extends Reader {
             SupportHiveDataType supportHiveDataType = SupportHiveDataType.getType(type);
             if (supportHiveDataType == null) {
               //TODO 脏数据处理
+              index++;
               continue;
             }
             record.addColumn(supportHiveDataType.parseDataXType(res, index++));
@@ -246,7 +249,9 @@ public class HiveReader extends Reader {
         LOG.info("Finish handle result!");
 
       } catch (SQLException e) {
-        String message = MessageFormat.format("hive-sql查询执行失败,sql为：{0} ,异常为：{1}", sql, e.getMessage());
+        LOG.error("Handle result error!", e);
+        String message = MessageFormat
+            .format("hive-sql查询执行失败,sql为：{0} ,异常为：{1}", sql, e.getMessage());
         throw DataXException.asDataXException(HiveReaderErrorCode.HIVE_QUERY_ERROR, message);
       }
       LOG.info("Finish reader!");
